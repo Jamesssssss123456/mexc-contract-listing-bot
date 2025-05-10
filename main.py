@@ -3,6 +3,7 @@ import time
 from bs4 import BeautifulSoup
 import os
 import telegram
+from telegram.ext import Updater, CommandHandler
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
@@ -37,7 +38,17 @@ def notify_telegram(message):
 def format_message(title, url):
     return f"📢 <b>合約上幣通知</b>\n標題: {title}\n連結: {url}"
 
+def status_command(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text="🤖 Bot 正在運行中，每 5 秒監控合約上幣公告中…")
+
 if __name__ == "__main__":
+    # 啟動 Telegram 指令監聽
+    updater = Updater(token=TELEGRAM_BOT_TOKEN, use_context=True)
+    dispatcher = updater.dispatcher
+    dispatcher.add_handler(CommandHandler("status", status_command))
+    updater.start_polling()
+
+    # 主監控迴圈（每 5 秒抓一次公告）
     while True:
         try:
             announcements = fetch_announcements()
@@ -48,4 +59,3 @@ if __name__ == "__main__":
             print(f"Error: {e}")
         time.sleep(5)
 
-        time.sleep(5)
