@@ -35,7 +35,7 @@ def notify_telegram(message):
     bot.send_message(chat_id=TELEGRAM_CHAT_ID, text=message, parse_mode=telegram.ParseMode.HTML)
 
 def format_message(title, url):
-    return f"📢 <b>合約上幣通知</b>
+    return f"📢 <b>合約上幣通知</b>\n標題: {title}\n連結: {url}"
 標題: {title}
 連結: {url}"
 
