@@ -36,8 +36,6 @@ def notify_telegram(message):
 
 def format_message(title, url):
     return f"📢 <b>合約上幣通知</b>\n標題: {title}\n連結: {url}"
-標題: {title}
-連結: {url}"
 
 if __name__ == "__main__":
     while True:
@@ -48,4 +46,6 @@ if __name__ == "__main__":
                 notify_telegram(msg)
         except Exception as e:
             print(f"Error: {e}")
+        time.sleep(5)
+
         time.sleep(5)
