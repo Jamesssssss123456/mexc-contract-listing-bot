@@ -1,26 +1,39 @@
 import requests
+import re
+import json
 import time
 import os
 import telegram
+from bs4 import BeautifulSoup
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
 
-MEXC_API_URL = "https://support.mexc.com/api/articles?categoryId=360000254192&page=1&limit=10&locale=zh-TW"
+MEXC_CONTRACT_URL = "https://www.mexc.com/zh-TW/support/categories/360000254192"
 KEYWORDS = ["上幣", "上線", "合約", "永續", "新合約", "開通交易", "U本位", "首發", "交易", "開放", "listing", "launch"]
 
 sent_titles = set()
 
 def fetch_announcements():
-    response = requests.get(MEXC_API_URL)
+    headers = {"User-Agent": "Mozilla/5.0"}
+    response = requests.get(MEXC_CONTRACT_URL, headers=headers)
     response.raise_for_status()
-    data = response.json()["data"]
+
+    # 解析 JavaScript 中的 __NUXT__ 全站資料
+    match = re.search(r"window\.__NUXT__=(\{.*\});</script>", response.text)
+    if not match:
+        raise ValueError("無法解析 MEXC 公告頁的 JSON 資料")
+
+    nuxt_data = json.loads(match.group(1))
+    
+    # 找出包含公告的列表（路徑可能會隨版本變動，但此為目前有效路徑）
+    articles = nuxt_data["data"][0]["articles"] if "data" in nuxt_data and nuxt_data["data"] else []
 
     new_alerts = []
-    for item in data:
-        title = item["title"]
-        article_id = item["id"]
+    for article in articles:
+        title = article.get("title", "")
+        article_id = article.get("articleId", "")
         full_url = f"https://www.mexc.com/zh-TW/support/articles/{article_id}"
 
         if any(keyword in title for keyword in KEYWORDS):
