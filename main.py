@@ -37,7 +37,7 @@ def format_message(title, url):
     return f"📢 <b>合約上幣通知</b>\n標題: {title}\n連結: {url}"
 
 def status_command(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="🤖 Bot 正在運行中，每 5 秒監控合約上幣公告中…")
+    context.bot.send_message(chat_id=update.effective_chat.id, text="🤖 Bot 正在運行中，每 5 秒監控 MEXC 合約公告…")
 
 if __name__ == "__main__":
     updater = Updater(token=TELEGRAM_BOT_TOKEN, use_context=True)
@@ -54,5 +54,6 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Error: {e}")
         time.sleep(5)
+
 
 
