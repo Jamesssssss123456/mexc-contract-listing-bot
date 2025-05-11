@@ -2,7 +2,6 @@ import requests
 import time
 import os
 import telegram
-from telegram.ext import Updater, CommandHandler
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
@@ -36,15 +35,7 @@ def notify_telegram(message):
 def format_message(title, url):
     return f"📢 <b>合約上幣通知</b>\n標題: {title}\n連結: {url}"
 
-def status_command(update, context):
-    context.bot.send_message(chat_id=update.effective_chat.id, text="🤖 Bot 正在運行中，每 5 秒監控 MEXC 合約公告…")
-
 if __name__ == "__main__":
-    updater = Updater(token=TELEGRAM_BOT_TOKEN, use_context=True)
-    dispatcher = updater.dispatcher
-    dispatcher.add_handler(CommandHandler("status", status_command))
-    updater.start_polling()
-
     while True:
         try:
             announcements = fetch_announcements()
