@@ -4,7 +4,6 @@ import json
 import time
 import os
 import telegram
-from bs4 import BeautifulSoup
 
 TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
@@ -20,14 +19,13 @@ def fetch_announcements():
     response = requests.get(MEXC_CONTRACT_URL, headers=headers)
     response.raise_for_status()
 
-    # 解析 JavaScript 中的 __NUXT__ 全站資料
+    # 提取 window.__NUXT__ JSON 資料
     match = re.search(r"window\.__NUXT__=(\{.*\});</script>", response.text)
     if not match:
-        raise ValueError("無法解析 MEXC 公告頁的 JSON 資料")
+        raise ValueError("無法找到 __NUXT__ JSON 結構")
 
     nuxt_data = json.loads(match.group(1))
-    
-    # 找出包含公告的列表（路徑可能會隨版本變動，但此為目前有效路徑）
+
     articles = nuxt_data["data"][0]["articles"] if "data" in nuxt_data and nuxt_data["data"] else []
 
     new_alerts = []
@@ -58,6 +56,7 @@ if __name__ == "__main__":
         except Exception as e:
             print(f"Error: {e}")
         time.sleep(5)
+
 
 
 
