@@ -8,7 +8,6 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
 
-# 使用 MEXC 公告 API（非 HTML 抓取）
 MEXC_API_URL = "https://support.mexc.com/api/articles?categoryId=360000254192&page=1&limit=10&locale=zh-TW"
 KEYWORDS = ["上幣", "上線", "合約", "永續", "新合約", "開通交易", "U本位", "首發", "交易", "開放", "listing", "launch"]
 
@@ -41,13 +40,11 @@ def status_command(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="🤖 Bot 正在運行中，每 5 秒監控合約上幣公告中…")
 
 if __name__ == "__main__":
-    # 啟動 Telegram 指令監聽
     updater = Updater(token=TELEGRAM_BOT_TOKEN, use_context=True)
     dispatcher = updater.dispatcher
     dispatcher.add_handler(CommandHandler("status", status_command))
     updater.start_polling()
 
-    # 主監控迴圈（每 5 秒抓一次公告）
     while True:
         try:
             announcements = fetch_announcements()
@@ -58,6 +55,4 @@ if __name__ == "__main__":
             print(f"Error: {e}")
         time.sleep(5)
 
-            print(f"Error: {e}")
-        time.sleep(5)
 
