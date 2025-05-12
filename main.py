@@ -19,26 +19,23 @@ def fetch_announcements():
     response.raise_for_status()
 
     soup = BeautifulSoup(response.text, "html.parser")
-    items = soup.find_all("div", class_="title___2J2aW")
-
-    print(f"[DEBUG] 抓到公告數量：{len(items)}")
+    items = soup.find_all("a", href=True)
+    print(f"[DEBUG] 找到 {len(items)} 個 <a> 標籤")
 
     new_alerts = []
     for item in items:
+        href = item.get("href")
         title = item.get_text(strip=True)
-        if not title:
+
+        if not href or "/support/articles/" not in href or not title:
             continue
+
         if any(keyword in title for keyword in KEYWORDS):
             if title not in sent_titles:
                 print(f"[推送] 命中公告：{title}")
                 sent_titles.add(title)
-                # 找對應文章 URL
-                parent_link = item.find_parent("a")
-                if parent_link and parent_link.get("href"):
-                    url = "https://www.mexc.com" + parent_link.get("href")
-                else:
-                    url = MEXC_CONTRACT_URL
-                new_alerts.append((title, url))
+                full_url = "https://www.mexc.com" + href
+                new_alerts.append((title, full_url))
             else:
                 print(f"[略過] 已發送過：{title}")
     return new_alerts
