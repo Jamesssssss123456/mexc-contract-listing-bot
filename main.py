@@ -7,7 +7,7 @@ TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
 bot = telegram.Bot(token=TELEGRAM_BOT_TOKEN)
 
-MEXC_ANNOUNCEMENT_URL = "https://www.mexc.com/announcement"
+MEXC_CONTRACT_URL = "https://www.mexc.com/zh-TW/support/categories/360000254192"
 KEYWORDS = ["上幣", "上線", "合約", "永續", "新合約", "開通交易", "U本位", "首發", "交易", "開放", "listing", "launch"]
 sent_titles = set()
 
